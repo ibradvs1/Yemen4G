@@ -23,8 +23,38 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
-        with:
-          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
+
+      - name: Install Android SDK packages
+        run: |
+          sdkmanager --install "platform-tools"
+          sdkmanager --install "platforms;android-35"
+          sdkmanager --install "build-tools;35.0.0"
+          yes | sdkmanager --licenses || true
+
+      - name: Create old sdkmanager path for Buildozer
+        run: |
+          SDK="$ANDROID_HOME"
+
+          echo "Android SDK: $SDK"
+
+          mkdir -p "$SDK/tools/bin"
+
+          SDKMANAGER=$(find "$SDK/cmdline-tools" -type f -name sdkmanager | head -n 1)
+
+          echo "Found sdkmanager:"
+          echo "$SDKMANAGER"
+
+          if [ -z "$SDKMANAGER" ]; then
+            echo "ERROR: sdkmanager not found"
+            exit 1
+          fi
+
+          ln -sf "$SDKMANAGER" "$SDK/tools/bin/sdkmanager"
+
+          chmod +x "$SDK/tools/bin/sdkmanager"
+
+          echo "Testing:"
+          "$SDK/tools/bin/sdkmanager" --version
 
       - name: Install system dependencies
         run: |
@@ -51,13 +81,6 @@ jobs:
       - name: Install Buildozer
         run: |
           python3 -m pip install --user --upgrade buildozer
-
-      - name: Check Android SDK
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-          which sdkmanager
-          sdkmanager --version
 
       - name: Build APK
         env:
