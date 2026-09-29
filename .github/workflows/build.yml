@@ -15,14 +15,39 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git \
+            zip \
+            unzip \
+            openjdk-17-jdk \
+            python3-pip \
+            python3-virtualenv \
+            autoconf \
+            libtool \
+            pkg-config \
+            zlib1g-dev \
+            libncurses5-dev \
+            libtinfo6 \
+            cmake \
+            libffi-dev \
+            libssl-dev \
+            automake \
+            autopoint \
+            gettext
+
+      - name: Install Buildozer
+        run: |
+          python3 -m pip install --user --upgrade buildozer
+
       - name: Build APK
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-          workdir: .
+        run: |
+          ~/.local/bin/buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Yemen4G-APK
+          name: Yemen4G
           path: bin/*.apk
