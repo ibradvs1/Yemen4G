@@ -15,6 +15,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
+
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -22,7 +33,6 @@ jobs:
             git \
             zip \
             unzip \
-            openjdk-17-jdk \
             python3-pip \
             python3-virtualenv \
             autoconf \
@@ -42,10 +52,12 @@ jobs:
         run: |
           python3 -m pip install --user --upgrade buildozer
 
-      - name: Accept Android SDK licenses
+      - name: Check Android SDK
         run: |
-          mkdir -p "$HOME/.buildozer/android/platform/android-sdk"
-          yes | sdkmanager --licenses || true
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          which sdkmanager
+          sdkmanager --version
 
       - name: Build APK
         env:
