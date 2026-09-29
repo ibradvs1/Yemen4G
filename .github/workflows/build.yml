@@ -8,6 +8,7 @@ on:
 
 env:
   PYTHONFORANDROID_PREREQUISITES_INSTALL_INTERACTIVE: "0"
+  PIP_NO_BINARY: "charset-normalizer"
 
 jobs:
   build:
@@ -56,6 +57,8 @@ jobs:
         run: |
           rm -rf .buildozer
           rm -rf "$HOME/.buildozer"
+          python -m pip cache purge || true
+          rm -rf "$HOME/.cache/pip" || true
 
       - name: Prepare Buildozer
         run: |
