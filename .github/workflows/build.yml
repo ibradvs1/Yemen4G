@@ -42,7 +42,14 @@ jobs:
         run: |
           python3 -m pip install --user --upgrade buildozer
 
+      - name: Accept Android SDK licenses
+        run: |
+          mkdir -p "$HOME/.buildozer/android/platform/android-sdk"
+          yes | sdkmanager --licenses || true
+
       - name: Build APK
+        env:
+          P4A_ACCEPT_ANDROID_SDK_LICENSE: "1"
         run: |
           ~/.local/bin/buildozer android debug
 
