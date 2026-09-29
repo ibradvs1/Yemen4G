@@ -18,6 +18,7 @@ fullscreen = 0
 android.permissions = INTERNET
 
 android.api = 35
+android.sdk_path = /usr/local/lib/android/sdk
 android.minapi = 24
 
 android.archs = arm64-v8a
