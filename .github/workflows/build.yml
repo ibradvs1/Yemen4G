@@ -67,16 +67,21 @@ jobs:
           echo "System sdkmanager:"
           echo "$SDKMANAGER"
 
+          if [ -z "$SDKMANAGER" ]; then
+            echo "ERROR: sdkmanager not found"
+            exit 1
+          fi
+
           ln -sf "$SDKMANAGER" \
             "$HOME/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager"
 
-          echo "SDK manager prepared."
+          echo "Buildozer sdkmanager prepared."
 
       - name: Build APK
         env:
           P4A_ACCEPT_ANDROID_SDK_LICENSE: "1"
         run: |
-          yes | ~/.local/bin/buildozer android debug
+          ~/.local/bin/buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
